@@ -129,26 +129,30 @@ footer{text-align:center;padding:16px;color:var(--muted);font-size:.82rem}
 </section>
 
 <section class="panel" id="p4">
-<p class="intro">Simulation 4 — Connect the electrical driving force to current through an ion channel using a simple ohmic model.</p>
+<p class="intro">Simulation 4 — Predict the equilibrium potential, driving force, current, and ion movement. All outputs update as you change the controls.</p>
 <div class="layout">
-<div class="card"><h2>Adjust Voltage and Conductance</h2>
-<div class="equation">I = g (V<sub>m</sub> − E<sub>i</sub>)<div class="eqsub">Driving force = Vₘ − Eᵢ</div></div>
-<div class="control"><div class="control-top"><label for="vm4">Membrane potential Vₘ</label><span class="value" id="vm4V">−60 mV</span></div><input id="vm4" type="range" min="-150" max="100" value="-60" step="1"></div>
-<div class="control"><div class="control-top"><label for="cin4">Inside concentration</label><span class="value" id="cin4V">15 mM</span></div><input id="cin4" type="range" min="1" max="150" value="15" step="1"></div>
-<div class="control"><div class="control-top"><label for="cout4">Outside concentration</label><span class="value" id="cout4V">145 mM</span></div><input id="cout4" type="range" min="1" max="150" value="145" step="1"></div>
+<div class="card"><h2>Set the Ion and Membrane Conditions</h2>
+<div class="equation">Eᵢ = (RT/zF) ln(a<sub>out</sub>/a<sub>in</sub>)<div class="eqsub">I = g(Vₘ − Eᵢ) · positive current is defined as outward</div></div>
+<div class="control"><div class="control-top"><label for="vm4">Membrane potential, Vₘ</label><span class="value" id="vm4V">−60 mV</span></div><input id="vm4" type="range" min="-150" max="100" value="-60" step="1"></div>
+<div class="control"><div class="control-top"><label for="cin4">Inside concentration, cᵢₙ</label><span class="value" id="cin4V">15 mM</span></div><input id="cin4" type="range" min="1" max="150" value="15" step="1"></div>
+<div class="control"><div class="control-top"><label for="cout4">Outside concentration, cₒᵤₜ</label><span class="value" id="cout4V">145 mM</span></div><input id="cout4" type="range" min="1" max="150" value="145" step="1"></div>
 <div class="control"><div class="control-top"><label for="temp4">Temperature</label><span class="value" id="temp4V">298 K</span></div><input id="temp4" type="range" min="273" max="323" value="298" step="1"></div>
-<div class="control"><div class="control-top"><label for="g4">Conductance g</label><span class="value" id="g4V">1.0 nS</span></div><input id="g4" type="range" min="0" max="5" value="1" step=".1"></div>
-<div class="control"><div class="control-top"><label for="ionType4">Ion species</label></div><select id="ionType4"><option value="Na⁺">Na⁺ (cation)</option><option value="K⁺">K⁺ (cation)</option><option value="Cl⁻">Cl⁻ (anion)</option><option value="Ca²⁺">Ca²⁺ (cation)</option></select></div>
-<div class="actions"><button class="action secondary" id="reset4">Reset values</button><button class="action" id="eqPreset4">set Vₘ = Eᵢ</button></div></div>
-<div class="card"><h2>Read Current and Direction</h2><div class="outputs">
-<div class="metric"><div class="label">Driving force</div><div class="num" id="drive4">−120</div><div class="unit">mV</div></div>
-<div class="metric"><div class="label">Current I</div><div class="num" id="current4">−120</div><div class="unit">pA (when g is nS)</div></div>
-<div class="metric"><div class="label">Conventional current</div><div class="num" id="conv4">negative</div><div class="unit">Using the stated sign convention</div></div>
-<div class="metric"><div class="label">Net current</div><div class="num" id="net4">Non-zero</div><div class="unit">when Vₘ ≠ Eᵢ</div></div></div>
-<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion4">Na⁺</div><span class="arrow" id="arrow4">←</span></div>
-<div class="status" id="status4">—</div><p class="note">Eᵢ is calculated from the Nernst equation, Eᵢ = (RT/zF) ln(aₒᵤₜ/aᵢₙ), using concentrations as an ideal-solution approximation. Current uses the ohmic model I = g(Vₘ − Eᵢ); nS × mV = pA. Positive conventional current is outward. For anions, ion movement is opposite to conventional current. Real channels may show nonlinear I–V behavior.</p></div>
+<div class="control"><div class="control-top"><label for="g4">Conductance, g</label><span class="value" id="g4V">1.0 nS</span></div><input id="g4" type="range" min="0" max="5" value="1" step="0.1"></div>
+<div class="control"><div class="control-top"><label for="ionType4">Ion species</label></div><select id="ionType4"><option value="Na⁺">Na⁺ (z = +1)</option><option value="K⁺">K⁺ (z = +1)</option><option value="Cl⁻">Cl⁻ (z = −1)</option><option value="Ca²⁺">Ca²⁺ (z = +2)</option></select></div>
+<div class="actions"><button class="action secondary" id="reset4">Reset values</button><button class="action" id="eqPreset4">Set Vₘ = Eᵢ</button><button class="action secondary" id="reversePreset4">Reverse driving force</button></div>
 </div>
-<div class="questions"><strong>Think about it</strong>When Vₘ = Eᵢ, why is the net current for this ion zero in this model? If you increase g while the driving force is zero, does the current change?</div>
+<div class="card"><h2>Live Results</h2><div class="outputs">
+<div class="metric"><div class="label">Nernst potential, Eᵢ</div><div class="num" id="ei4">+60.8</div><div class="unit">mV</div></div>
+<div class="metric"><div class="label">Driving force, Vₘ − Eᵢ</div><div class="num" id="drive4">−120.8</div><div class="unit">mV</div></div>
+<div class="metric"><div class="label">Current, I</div><div class="num" id="current4">−120.8</div><div class="unit">pA (nS × mV = pA)</div></div>
+<div class="metric"><div class="label">Current state</div><div class="num" id="net4">Non-zero</div><div class="unit" id="conv4">Inward conventional current</div></div></div>
+<div class="visual" id="visual4" aria-label="Schematic of ion movement across a membrane"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion4">Na⁺</div><span class="arrow" id="arrow4">←</span></div>
+<div class="control" style="margin-top:14px"><div class="control-top"><label>Current relative to maximum slider range</label><span class="value" id="currentScale4">−16%</span></div><div style="height:12px;border-radius:999px;background:linear-gradient(to right,#dbeafe 0%,#dbeafe 49.5%,#64748b 49.5%,#64748b 50.5%,#fee2e2 50.5%,#fee2e2 100%);position:relative;overflow:hidden"><div id="currentBar4" style="position:absolute;top:0;bottom:0;left:50%;width:0%;background:#2563eb;transition:all .2s"></div></div><p class="note">The center represents zero current. The marker shifts left for inward conventional current and right for outward conventional current.</p></div>
+<div class="status" id="status4">—</div>
+<p class="note">The Nernst equation uses concentrations as an ideal-solution approximation to activities. Current is calculated with I = g(Vₘ − Eᵢ); nS × mV = pA. For cations, ion movement follows conventional current; for anions, it is opposite. This is a teaching model: real channels may show nonlinear current–voltage relationships, voltage-dependent gating, or multiple permeant ions.</p>
+</div>
+</div>
+<div class="questions"><strong>Predict before changing a control</strong>What happens to current when Vₘ approaches Eᵢ? What happens if conductance doubles while Vₘ − Eᵢ stays constant? Does an anion move in the same direction as conventional current?</div>
 </section>
 </main>
 <footer>Interactive teaching model · Adjust the controls to explore concepts. This tool is not intended to calculate experimental values directly.</footer>
@@ -202,21 +206,59 @@ function update3(){
 ['dmu3','L3','z3','area3'].forEach(id=>$(id).addEventListener('input',update3));
 $('reset3').onclick=()=>{$('dmu3').value=-5;$('L3').value=1;$('z3').value='1';$('area3').value=1;update3();};
 function update4(){
- const vm=+$('vm4').value, cin=+$('cin4').value, cout=+$('cout4').value, T=+$('temp4').value, g=+$('g4').value, ion=$('ionType4').value;
+ const vm=Number($('vm4').value), cin=Number($('cin4').value), cout=Number($('cout4').value);
+ const T=Number($('temp4').value), g=Number($('g4').value), ion=$('ionType4').value;
  const z=ion==='Ca²⁺'?2:ion==='Cl⁻'?-1:1;
- const Ei=(8.314462618*T/(z*96485.33212))*Math.log(cout/cin)*1000; // mV; concentration ratio approximates activity ratio
- const drive=vm-Ei, I=g*drive;
- setText('vm4V',`${vm} mV`);setText('cin4V',`${cin} mM`);setText('cout4V',`${cout} mM`);setText('temp4V',`${T} K`);setText('ei4V',`${Ei>=0?'+':''}${fmt(Ei,1)} mV`);setText('g4V',`${fmt(g,1)} nS`);
- setText('drive4',fmt(drive,1));setText('current4',fmt(I,2));setText('conv4',Math.abs(I)<.05?'Zero':I>0?'Positive (outward)':'Negative (inward)');setText('net4',Math.abs(I)<.05?'Zero':'Non-zero');
+ const R=8.314462618, F=96485.33212;
+ const Ei=(R*T/(z*F))*Math.log(cout/cin)*1000; // mV
+ const drive=vm-Ei; // mV
+ const I=g*drive; // pA: nS × mV = pA
+ const nearZero=Math.abs(I)<0.05;
+ setText('vm4V',`${vm} mV`); setText('cin4V',`${cin} mM`); setText('cout4V',`${cout} mM`);
+ setText('temp4V',`${T} K`); setText('g4V',`${fmt(g,1)} nS`);
+ setText('ei4',`${Ei>=0?'+':''}${fmt(Ei,1)}`);
+ setText('drive4',`${drive>=0?'+':''}${fmt(drive,1)}`);
+ setText('current4',`${I>=0?'+':''}${fmt(I,2)}`);
+ setText('net4',nearZero?'Approximately zero':'Non-zero');
+ setText('conv4',nearZero?'No net conventional current':I>0?'Outward conventional current':'Inward conventional current');
  setText('ion4',ion);
- $('ion4').style.left=I<-.05?'28%':I>.05?'68%':'48%';$('ion4').style.top='calc(48% - 25px)';
- $('arrow4').textContent=I<-.05?'←':I>.05?'→':'↔';$('arrow4').style.left=I<-.05?'40%':I>.05?'55%':'47%';$('arrow4').style.top='35%';
- const movement=Math.abs(I)<.05?'There is no net current because Vₘ is approximately equal to Eᵢ or conductance is zero.':I>0?(ion==='Cl⁻'?'Conventional current is outward; chloride ions move inward.':'Conventional current and cation movement are outward.'):(ion==='Cl⁻'?'Conventional current is inward; chloride ions move outward.':'Conventional current and cation movement are inward.');
- setText('status4',movement);$('status4').className='status '+(Math.abs(I)<.05?'neutral':'');
+ const ionMovesRight=(I>0)!==(z<0), neutral=nearZero || g===0;
+ $('ion4').style.left=neutral?'48%':(ionMovesRight?'68%':'28%');
+ $('ion4').style.top='calc(48% - 25px)'; $('ion4').style.transition='left .35s ease';
+ $('arrow4').textContent=neutral?'↔':(ionMovesRight?'→':'←');
+ $('arrow4').style.left=neutral?'47%':(ionMovesRight?'55%':'40%');
+ $('arrow4').style.top='35%'; $('arrow4').style.transition='left .35s ease';
+ const maxP=750, fraction=Math.min(0.49,Math.abs(I)/maxP*0.49), bar=$('currentBar4');
+ bar.style.width=`${fraction*100}%`; bar.style.left=I<0?`${50-fraction*100}%`:'50%';
+ bar.style.background=I<0?'#2563eb':'#dc2626';
+ setText('currentScale4',`${I>0?'+':''}${fmt(I/maxP*100,0)}%`);
+ let message;
+ if(g===0) message='Conductance is zero, so this model predicts zero current even if a driving force exists.';
+ else if(Math.abs(drive)<0.05) message='Vₘ ≈ Eᵢ: the chemical and electrical contributions balance for this ion, so net current is approximately zero in this model.';
+ else if(I>0) message=z<0?'Conventional current is outward; because this is an anion, net ion movement is inward.':'Conventional current and cation movement are outward.';
+ else message=z<0?'Conventional current is inward; because this is an anion, net ion movement is outward.':'Conventional current and cation movement are inward.';
+ setText('status4',message); $('status4').className='status '+(nearZero?'neutral':'');
 }
-['vm4','cin4','cout4','temp4','g4','ionType4'].forEach(id=>$(id).addEventListener('input',update4));
-$('reset4').onclick=()=>{$('vm4').value=-60;$('cin4').value=15;$('cout4').value=145;$('temp4').value=298;$('g4').value=1;$('ionType4').value='Na⁺';update4();};
-$('eqPreset4').onclick=()=>{const ion=$('ionType4').value,z=ion==='Ca²⁺'?2:ion==='Cl⁻'?-1:1;const Ei=(8.314462618*(+$('temp4').value)/(z*96485.33212))*Math.log((+$('cout4').value)/(+$('cin4').value))*1000;$('vm4').value=Math.max(-150,Math.min(100,Math.round(Ei)));update4();};
+['vm4','cin4','cout4','temp4','g4','ionType4'].forEach(id=>{
+ $(id).addEventListener('input',update4); $(id).addEventListener('change',update4);
+});
+$('reset4').onclick=()=>{
+ $('vm4').value=-60;$('cin4').value=15;$('cout4').value=145;
+ $('temp4').value=298;$('g4').value=1;$('ionType4').value='Na⁺';update4();
+};
+$('eqPreset4').onclick=()=>{
+ const ion=$('ionType4').value,z=ion==='Ca²⁺'?2:ion==='Cl⁻'?-1:1;
+ const T=Number($('temp4').value),cin=Number($('cin4').value),cout=Number($('cout4').value);
+ const Ei=(8.314462618*T/(z*96485.33212))*Math.log(cout/cin)*1000;
+ $('vm4').value=Math.max(-150,Math.min(100,Math.round(Ei)));update4();
+};
+$('reversePreset4').onclick=()=>{
+ const ion=$('ionType4').value,z=ion==='Ca²⁺'?2:ion==='Cl⁻'?-1:1;
+ const T=Number($('temp4').value),cin=Number($('cin4').value),cout=Number($('cout4').value);
+ const Ei=(8.314462618*T/(z*96485.33212))*Math.log(cout/cin)*1000;
+ const target=Ei-(Number($('vm4').value)-Ei);
+ $('vm4').value=Math.max(-150,Math.min(100,Math.round(target)));update4();
+};
 update1();update2();update3();update4();
 </script>
 </body>
