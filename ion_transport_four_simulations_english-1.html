@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Thermodynamics to Ion Transport | Interactive Lab</title>
+<style>
+:root{--ink:#182536;--muted:#5c6b7c;--line:#dce4ec;--paper:#f4f7fb;--card:#fff;--blue:#2463eb;--cyan:#0f9eaa;--orange:#e58a25;--green:#16845b;--red:#c74440}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;line-height:1.55}
+header{background:linear-gradient(125deg,#142b49,#1d5272);color:#fff;padding:28px 18px 24px}
+.wrap{max-width:1050px;margin:auto}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.75rem;font-weight:800;opacity:.8}
+h1{font-size:clamp(1.5rem,4vw,2.25rem);line-height:1.18;margin:8px 0}
+header p{max-width:760px;margin:10px 0 0;color:#e2edf6}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 0}
+nav button{border:1px solid #ffffff65;background:#ffffff12;color:white;padding:10px 13px;border-radius:10px;font-weight:700;cursor:pointer}
+nav button.active{background:white;color:#183550;border-color:white}
+main{max-width:1050px;margin:22px auto;padding:0 14px 38px}
+.panel{display:none}.panel.active{display:block}
+.intro{color:var(--muted);margin:0 0 16px}
+.layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 18px #1b35500a;min-width:0}
+.card h2{font-size:1.08rem;margin:0 0 14px}
+.equation{background:#eef5ff;border:1px solid #d6e6ff;border-radius:12px;padding:14px;text-align:center;font-size:clamp(1rem,2.8vw,1.3rem);font-weight:750;margin:12px 0}
+.eqsub{font-size:.82rem;font-weight:500;color:var(--muted);margin-top:4px}
+.control{margin:17px 0}
+.control-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:7px}
+.control label{font-weight:650}
+.value{font-variant-numeric:tabular-nums;color:var(--blue);font-weight:800;white-space:nowrap}
+input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
+select{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:white;font:inherit}
+.outputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.metric{background:#f6f8fb;border:1px solid var(--line);border-radius:12px;padding:12px}
+.metric .label{font-size:.82rem;color:var(--muted)}
+.metric .num{font-size:1.35rem;font-weight:850;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.metric .unit{font-size:.8rem;color:var(--muted)}
+.status{margin-top:12px;border-radius:12px;background:#edf8f3;border:1px solid #cbe9db;padding:12px;font-weight:650}
+.status.warn{background:#fff6e8;border-color:#f5dfb8}
+.status.neutral{background:#f0f4f8;border-color:#dce4ec}
+.visual{height:170px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#f9fbff,#eef4f9);border:1px solid var(--line);border-radius:12px;margin:12px 0;position:relative;overflow:hidden}
+.membrane{position:absolute;left:0;right:0;top:48%;height:15px;background:repeating-linear-gradient(90deg,#7ca6c9 0 9px,#d4e5f4 9px 18px);opacity:.75}
+.side-label{position:absolute;top:10px;font-size:.8rem;color:var(--muted);font-weight:700}
+.side-label.left{left:12px}.side-label.right{right:12px}
+.ion{width:36px;height:36px;border-radius:50%;background:#2463eb;color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:850;position:absolute;box-shadow:0 3px 9px #2463eb44;transition:left .25s,top .25s}
+.arrow{position:absolute;font-size:1.6rem;font-weight:900;color:var(--orange)}
+.note{font-size:.88rem;color:var(--muted)}
+button.action{background:var(--blue);color:white;border:0;border-radius:9px;padding:9px 13px;font:inherit;font-weight:750;cursor:pointer}
+button.secondary{background:white;color:var(--ink);border:1px solid var(--line)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.questions{margin-top:16px;background:#fff;border-left:4px solid var(--cyan);padding:13px 15px;border-radius:0 10px 10px 0}
+.questions strong{display:block;margin-bottom:4px}
+footer{text-align:center;padding:16px;color:var(--muted);font-size:.82rem}
+@media(max-width:720px){.layout{grid-template-columns:1fr}.card{padding:15px}header{padding:23px 16px}.outputs{grid-template-columns:repeat(2,minmax(0,1fr))}nav button{flex:1 1 44%;font-size:.9rem}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">Interactive teaching lab · Physical chemistry / biophysics</div>
+<h1>From Thermodynamics to Ion Transport</h1>
+<p>Explore the connections between thermodynamic driving forces, membrane transport, and ionic current. Adjust variables and observe the results instantly.</p>
+<nav aria-label="Choose a simulation">
+<button class="active" data-tab="p1">1 · Electrochemical Potential</button>
+<button data-tab="p2">2 · Direction of Δμ</button>
+<button data-tab="p3">3 · Thermodynamics → Kinetics</button>
+<button data-tab="p4">4 · Follow the Ion</button>
+</nav>
+</div></header>
+<main>
+<section class="panel active" id="p1">
+<p class="intro">Simulation 1 — Separate the chemical and electrical contributions to the electrochemical potential difference.</p>
+<div class="layout">
+<div class="card"><h2>Adjust Ion Conditions</h2>
+<div class="equation">Δμ<sub>i</sub> = RT ln(a<sub>in</sub>/a<sub>out</sub>) + z<sub>i</sub>FΔψ<div class="eqsub">define Δμ = μ<sub>in</sub> − μ<sub>out</sub> and Δψ = ψ<sub>in</sub> − ψ<sub>out</sub></div></div>
+<div class="control"><div class="control-top"><label for="aIn">Inside activity (aᵢₙ)</label><span class="value" id="aInV">10</span></div><input id="aIn" type="range" min="0.1" max="100" value="10" step=".1"></div>
+<div class="control"><div class="control-top"><label for="aOut">Outside activity (aₒᵤₜ)</label><span class="value" id="aOutV">1</span></div><input id="aOut" type="range" min="0.1" max="100" value="1" step=".1"></div>
+<div class="control"><div class="control-top"><label for="z1">Ion charge (z)</label></div><select id="z1"><option value="1">+1 e.g. Na⁺, K⁺</option><option value="2">+2 e.g. Ca²⁺</option><option value="-1">−1 e.g. Cl⁻</option><option value="-2">−2 e.g. SO₄²⁻</option></select></div>
+<div class="control"><div class="control-top"><label for="psi1">Δψ = ψᵢₙ − ψₒᵤₜ</label><span class="value" id="psi1V">−60 mV</span></div><input id="psi1" type="range" min="-150" max="150" value="-60" step="1"></div>
+<div class="control"><div class="control-top"><label for="temp1">Temperature</label><span class="value" id="temp1V">298 K</span></div><input id="temp1" type="range" min="273" max="323" value="298" step="1"></div>
+<div class="actions"><button class="action secondary" id="reset1">Reset values</button><button class="action" id="preset1">Example: Na⁺ in a cell</button></div>
+</div>
+<div class="card"><h2>Results</h2><div class="outputs">
+<div class="metric"><div class="label">Chemical term</div><div class="num" id="chem1">—</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Electrical term</div><div class="num" id="elec1">—</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Total Δμ</div><div class="num" id="total1">—</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Thermodynamic balance</div><div class="num" id="balance1">—</div><div class="unit">Based on the sign of Δμ</div></div></div>
+<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion1">Na⁺</div><span class="arrow" id="arrow1">⇢</span></div>
+<div class="status" id="status1">—</div><p class="note">This model treats activity as a positive, dimensionless value. Constants: F = 96.485 kJ V⁻¹ mol⁻¹ and R = 0.008314 kJ mol⁻¹ K⁻¹.</p></div>
+</div>
+<div class="questions"><strong>Think about it</strong>What happens to Δμ if inside activity increases while membrane potential stays constant? When do the chemical and electrical terms exactly cancel?</div>
+</section>
+
+<section class="panel" id="p2">
+<p class="intro">Simulation 2 — Interpret the sign of Δμ to identify the thermodynamically favored direction without confusing direction with transport rate.</p>
+<div class="layout">
+<div class="card"><h2>Adjust the Driving Force</h2><div class="equation">Δμ = μ<sub>in</sub> − μ<sub>out</sub><div class="eqsub">The favored direction follows this sign convention</div></div>
+<div class="control"><div class="control-top"><label for="dmu2">Δμ overall</label><span class="value" id="dmu2V">−5.0 kJ mol⁻¹</span></div><input id="dmu2" type="range" min="-15" max="15" value="-5" step=".1"></div>
+<div class="control"><div class="control-top"><label for="z2">Ion type (for illustration)</label></div><select id="z2"><option value="1">Cation (+)</option><option value="-1">Anion (−)</option></select></div>
+<div class="control"><div class="control-top"><label for="mob2">Channel permeability (illustrative)</label><span class="value" id="mob2V">Medium</span></div><input id="mob2" type="range" min="0" max="100" value="50" step="1"></div>
+<div class="actions"><button class="action secondary" id="reset2">Reset values</button></div></div>
+<div class="card"><h2>Interpret the Result</h2><div class="outputs">
+<div class="metric"><div class="label">Δμ</div><div class="num" id="dmu2out">−5.0</div><div class="unit">kJ mol⁻¹</div></div>
+<div class="metric"><div class="label">Favored direction</div><div class="num" id="dir2">Into the cell</div><div class="unit">Thermodynamic tendency</div></div>
+</div>
+<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion2">+</div><span class="arrow" id="arrow2">←</span></div>
+<div class="status" id="status2">—</div><p class="note">if Δμ = 0 the system is atThermodynamic statefor this ion but this does not mean molecules stop moving microscopically</p>
+</div></div>
+<div class="questions"><strong>Think about it</strong>Does a larger driving force always mean that ions move faster? What additional information about the channel or transport system is needed?</div>
+</section>
+
+<section class="panel" id="p3">
+<p class="intro">Simulation 3 — The thermodynamic driving force describes the tendency to move, while kinetics and transport properties determine the flux.</p>
+<div class="layout">
+<div class="card"><h2>Adjust the Driving Force and Transport</h2>
+<div class="equation">J = −L Δμ<div class="eqsub">Linear phenomenological model near equilibrium; Δμ is in J mol⁻¹</div></div>
+<div class="control"><div class="control-top"><label for="dmu3">Δμ</label><span class="value" id="dmu3V">−5.0 kJ mol⁻¹</span></div><input id="dmu3" type="range" min="-10" max="10" value="-5" step=".1"></div>
+<div class="control"><div class="control-top"><label for="L3">Transport coefficient L</label><span class="value" id="L3V">1.0 × 10⁻⁸</span></div><input id="L3" type="range" min="0" max="3" value="1" step=".1"></div>
+<div class="control"><div class="control-top"><label for="z3">ion charge z</label></div><select id="z3"><option value="1">+1</option><option value="2">+2</option><option value="-1">−1</option><option value="-2">−2</option></select></div>
+<div class="control"><div class="control-top"><label for="area3">Membrane area A</label><span class="value" id="area3V">1.0 µm²</span></div><input id="area3" type="range" min=".1" max="5" value="1" step=".1"></div>
+<div class="actions"><button class="action secondary" id="reset3">Reset values</button></div></div>
+<div class="card"><h2>From Thermodynamics to Flux and Current</h2><div class="outputs">
+<div class="metric"><div class="label">Molar flux J</div><div class="num" id="J3">5.0 × 10⁻⁵</div><div class="unit">mol m⁻² s⁻¹</div></div>
+<div class="metric"><div class="label">Current density j = −zFJ</div><div class="num" id="j3">4.82</div><div class="unit">A m⁻²</div></div>
+<div class="metric"><div class="label">Total current I = jA</div><div class="num" id="I3">4.82</div><div class="unit">pA</div></div>
+<div class="metric"><div class="label">Is the driving force zero?</div><div class="num" id="eq3">no</div><div class="unit">Check Δμ</div></div></div>
+<div class="status" id="status3">—</div><p class="note">Units are consistent: L is expressed in mol² J⁻¹ m⁻² s⁻¹, Δμ is converted from kJ mol⁻¹ to J mol⁻¹, J is molar flux, j is current density, and A is converted from µm² to m². The linear law is a simplified near-equilibrium model; L is illustrative, not fitted to a specific membrane.</p></div>
+</div>
+<div class="questions"><strong>Think about it</strong>If Δμ stays constant and L doubles, what happens to flux? If membrane area increases, what happens to flux per unit area and total current?</div>
+</section>
+
+<section class="panel" id="p4">
+<p class="intro">Simulation 4 — Connect the electrical driving force to current through an ion channel using a simple ohmic model.</p>
+<div class="layout">
+<div class="card"><h2>Adjust Voltage and Conductance</h2>
+<div class="equation">I = g (V<sub>m</sub> − E<sub>i</sub>)<div class="eqsub">Driving force = Vₘ − Eᵢ</div></div>
+<div class="control"><div class="control-top"><label for="vm4">Membrane potential Vₘ</label><span class="value" id="vm4V">−60 mV</span></div><input id="vm4" type="range" min="-150" max="100" value="-60" step="1"></div>
+<div class="control"><div class="control-top"><label for="cin4">Inside concentration</label><span class="value" id="cin4V">15 mM</span></div><input id="cin4" type="range" min="1" max="150" value="15" step="1"></div>
+<div class="control"><div class="control-top"><label for="cout4">Outside concentration</label><span class="value" id="cout4V">145 mM</span></div><input id="cout4" type="range" min="1" max="150" value="145" step="1"></div>
+<div class="control"><div class="control-top"><label for="temp4">Temperature</label><span class="value" id="temp4V">298 K</span></div><input id="temp4" type="range" min="273" max="323" value="298" step="1"></div>
+<div class="control"><div class="control-top"><label for="g4">Conductance g</label><span class="value" id="g4V">1.0 nS</span></div><input id="g4" type="range" min="0" max="5" value="1" step=".1"></div>
+<div class="control"><div class="control-top"><label for="ionType4">Ion species</label></div><select id="ionType4"><option value="Na⁺">Na⁺ (cation)</option><option value="K⁺">K⁺ (cation)</option><option value="Cl⁻">Cl⁻ (anion)</option><option value="Ca²⁺">Ca²⁺ (cation)</option></select></div>
+<div class="actions"><button class="action secondary" id="reset4">Reset values</button><button class="action" id="eqPreset4">set Vₘ = Eᵢ</button></div></div>
+<div class="card"><h2>Read Current and Direction</h2><div class="outputs">
+<div class="metric"><div class="label">Driving force</div><div class="num" id="drive4">−120</div><div class="unit">mV</div></div>
+<div class="metric"><div class="label">Current I</div><div class="num" id="current4">−120</div><div class="unit">pA (when g is nS)</div></div>
+<div class="metric"><div class="label">Conventional current</div><div class="num" id="conv4">negative</div><div class="unit">Using the stated sign convention</div></div>
+<div class="metric"><div class="label">Net current</div><div class="num" id="net4">Non-zero</div><div class="unit">when Vₘ ≠ Eᵢ</div></div></div>
+<div class="visual"><span class="side-label left">Inside</span><span class="side-label right">Outside</span><div class="membrane"></div><div class="ion" id="ion4">Na⁺</div><span class="arrow" id="arrow4">←</span></div>
+<div class="status" id="status4">—</div><p class="note">Eᵢ is calculated from the Nernst equation, Eᵢ = (RT/zF) ln(aₒᵤₜ/aᵢₙ), using concentrations as an ideal-solution approximation. Current uses the ohmic model I = g(Vₘ − Eᵢ); nS × mV = pA. Positive conventional current is outward. For anions, ion movement is opposite to conventional current. Real channels may show nonlinear I–V behavior.</p></div>
+</div>
+<div class="questions"><strong>Think about it</strong>When Vₘ = Eᵢ, why is the net current for this ion zero in this model? If you increase g while the driving force is zero, does the current change?</div>
+</section>
+</main>
+<footer>Interactive teaching model · Adjust the controls to explore concepts. This tool is not intended to calculate experimental values directly.</footer>
+<script>
+const $=id=>document.getElementById(id);
+const fmt=(x,n=2)=>Number(x).toLocaleString('en-US',{minimumFractionDigits:n,maximumFractionDigits:n});
+function setText(id,text){$(id).textContent=text}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x===b));
+ document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));
+}));
+function update1(){
+ const ai=+$('aIn').value, ao=+$('aOut').value,z=+$('z1').value,psi=+$('psi1').value/1000,T=+$('temp1').value;
+ const chem=.008314*T*Math.log(ai/ao),elec=z*96.485*psi,total=chem+elec;
+ setText('aInV',fmt(ai,1));setText('aOutV',fmt(ao,1));setText('psi1V',`${$('psi1').value} mV`);setText('temp1V',`${T} K`);
+ setText('chem1',fmt(chem,3));setText('elec1',fmt(elec,3));setText('total1',fmt(total,3));
+ setText('balance1',Math.abs(total)<.05?'Near equilibrium':total<0?'Δμ < 0':'Δμ > 0');
+ const inside=$('aIn').value, outside=$('aOut').value;
+ setText('ion1',z>0?(z===2?'Ca²⁺':'Na⁺'):(z===-2?'SO₄²⁻':'Cl⁻'));
+ $('ion1').style.left=total<0?'28%':total>0?'68%':'48%';$('ion1').style.top='calc(48% - 25px)';
+ $('arrow1').textContent=total<-.05?'←':total>.05?'→':'↔';$('arrow1').style.left=total<-.05?'40%':total>.05?'55%':'47%';$('arrow1').style.top='35%';
+ const s=total<-.05?'when Δμ = μin − μout < 0 movement from outside to inside lowers the electrochemical potential and is thermodynamically favored':total>.05?'when Δμ > 0 movement from inside to outside lowers the electrochemical potential and is thermodynamically favored and is thermodynamically favored':'Δμ is approximately zero: there is no net thermodynamic driving force for this ion.';
+ setText('status1',s);$('status1').className='status '+(Math.abs(total)<.05?'neutral':'');
+}
+['aIn','aOut','z1','psi1','temp1'].forEach(id=>$(id).addEventListener('input',update1));
+$('reset1').onclick=()=>{ $('aIn').value=10;$('aOut').value=1;$('z1').value='1';$('psi1').value=-60;$('temp1').value=298;update1();};
+$('preset1').onclick=()=>{$('aIn').value=10;$('aOut').value=140;$('z1').value='1';$('psi1').value=-60;$('temp1').value=310;update1();};
+function update2(){
+ const d=+$('dmu2').value,m=+$('mob2').value,z=+$('z2').value;
+ setText('dmu2V',`${fmt(d,1)} kJ mol⁻¹`);setText('dmu2out',fmt(d,1));setText('mob2V',m<34?'Low':m<67?'Medium':'High');
+ const dir=Math.abs(d)<.05?'No net direction':d<0?'Into the cell':'Out of the cell';setText('dir2',dir);
+ $('ion2').textContent=z>0?'+':'−';$('ion2').style.left=d<-.05?'28%':d>.05?'68%':'48%';$('ion2').style.top='calc(48% - 25px)';
+ $('arrow2').textContent=d<-.05?'←':d>.05?'→':'↔';$('arrow2').style.left=d<-.05?'40%':d>.05?'55%':'47%';$('arrow2').style.top='35%';
+ setText('status2',Math.abs(d)<.05?'Δμ ≈ 0: there is no net driving force, although microscopic movement may continue in both directions.':`${dir} is thermodynamically favored, but this panel does not calculate a transport rate. The permeability control is qualitative only (selected level: ${m}%).`);
+ $('status2').className='status '+(Math.abs(d)<.05?'neutral':'');
+}
+['dmu2','mob2','z2'].forEach(id=>$(id).addEventListener('input',update2));
+$('reset2').onclick=()=>{$('dmu2').value=-5;$('mob2').value=50;$('z2').value='1';update2();};
+function update3(){
+ const dKJ=+$('dmu3').value, L=+$('L3').value*1e-8, z=+$('z3').value, Aum2=+$('area3').value;
+ const dJ=dKJ*1000;
+ const J=-L*dJ;                         // mol m^-2 s^-1
+ const j=-z*96485.33212*J;             // A m^-2; positive conventional current is outward
+ const I_A=j*Aum2*1e-12;               // A, since 1 µm² = 1e-12 m²
+ const I_pA=I_A*1e12;                  // pA
+ setText('dmu3V',`${fmt(dKJ,1)} kJ mol⁻¹`);setText('L3V',`${fmt(+$('L3').value,1)} × 10⁻⁸ mol² J⁻¹ m⁻² s⁻¹`);setText('area3V',`${fmt(Aum2,1)} µm²`);
+ setText('J3',`${J.toExponential(3)}`);setText('j3',`${j.toExponential(3)}`);setText('I3',`${fmt(I_pA,3)}`);setText('eq3',Math.abs(dKJ)<.05?'Yes':'No');
+ setText('status3',Math.abs(dKJ)<.05?'When Δμ = 0, this linear model gives J = 0 and therefore j = I = 0.':'Here positive J is defined inward, consistent with J = −LΔμ. Conventional current density is j = −zFJ, so for cations its sign is opposite to inward molar flux. Reversing Δμ reverses flux and current; increasing area changes total current but not flux density.');
+ $('status3').className='status '+(Math.abs(dKJ)<.05?'neutral':'');
+}
+['dmu3','L3','z3','area3'].forEach(id=>$(id).addEventListener('input',update3));
+$('reset3').onclick=()=>{$('dmu3').value=-5;$('L3').value=1;$('z3').value='1';$('area3').value=1;update3();};
+function update4(){
+ const vm=+$('vm4').value, cin=+$('cin4').value, cout=+$('cout4').value, T=+$('temp4').value, g=+$('g4').value, ion=$('ionType4').value;
+ const z=ion==='Ca²⁺'?2:ion==='Cl⁻'?-1:1;
+ const Ei=(8.314462618*T/(z*96485.33212))*Math.log(cout/cin)*1000; // mV; concentration ratio approximates activity ratio
+ const drive=vm-Ei, I=g*drive;
+ setText('vm4V',`${vm} mV`);setText('cin4V',`${cin} mM`);setText('cout4V',`${cout} mM`);setText('temp4V',`${T} K`);setText('ei4V',`${Ei>=0?'+':''}${fmt(Ei,1)} mV`);setText('g4V',`${fmt(g,1)} nS`);
+ setText('drive4',fmt(drive,1));setText('current4',fmt(I,2));setText('conv4',Math.abs(I)<.05?'Zero':I>0?'Positive (outward)':'Negative (inward)');setText('net4',Math.abs(I)<.05?'Zero':'Non-zero');
+ setText('ion4',ion);
+ $('ion4').style.left=I<-.05?'28%':I>.05?'68%':'48%';$('ion4').style.top='calc(48% - 25px)';
+ $('arrow4').textContent=I<-.05?'←':I>.05?'→':'↔';$('arrow4').style.left=I<-.05?'40%':I>.05?'55%':'47%';$('arrow4').style.top='35%';
+ const movement=Math.abs(I)<.05?'There is no net current because Vₘ is approximately equal to Eᵢ or conductance is zero.':I>0?(ion==='Cl⁻'?'Conventional current is outward; chloride ions move inward.':'Conventional current and cation movement are outward.'):(ion==='Cl⁻'?'Conventional current is inward; chloride ions move outward.':'Conventional current and cation movement are inward.');
+ setText('status4',movement);$('status4').className='status '+(Math.abs(I)<.05?'neutral':'');
+}
+['vm4','cin4','cout4','temp4','g4','ionType4'].forEach(id=>$(id).addEventListener('input',update4));
+$('reset4').onclick=()=>{$('vm4').value=-60;$('cin4').value=15;$('cout4').value=145;$('temp4').value=298;$('g4').value=1;$('ionType4').value='Na⁺';update4();};
+$('eqPreset4').onclick=()=>{const ion=$('ionType4').value,z=ion==='Ca²⁺'?2:ion==='Cl⁻'?-1:1;const Ei=(8.314462618*(+$('temp4').value)/(z*96485.33212))*Math.log((+$('cout4').value)/(+$('cin4').value))*1000;$('vm4').value=Math.max(-150,Math.min(100,Math.round(Ei)));update4();};
+update1();update2();update3();update4();
+</script>
+</body>
+</html>
